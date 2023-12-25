@@ -92,10 +92,16 @@ int main()
     rotate_tetremino_right(dummy_tetremino2);
 
     print_tetremino(tetremino7);*/
-    /* printf("Enter the coordinate: ");
-     scanf("%d\n", &coordinate);*/
-    // add_tetramino_to_board(gameboard, tetremino7, 3, n);
-    print_board(gameboard);
+    while (1)
+    {
+
+        printf("Enter the coordinate: ");
+        scanf("%d", &coordinate);
+
+        add_tetramino_to_board(gameboard, tetremino7, coordinate, n);
+        print_board(gameboard);
+    }
+    return 0;
 }
 
 void reset_board(int board[MAX_SIZE][MAX_SIZE])
@@ -104,7 +110,7 @@ void reset_board(int board[MAX_SIZE][MAX_SIZE])
     {
         for (int j = 0; j < m; j++)
         {
-            board[i][j] = 1;
+            board[i][j] = 0;
         }
     }
 }
@@ -113,7 +119,7 @@ void print_board(int board[MAX_SIZE][MAX_SIZE])
 {
     for (int j = 0; j < m; j++)
     {
-        printf(" - ");
+        printf(" ---");
     }
     printf("\n");
 
@@ -121,10 +127,10 @@ void print_board(int board[MAX_SIZE][MAX_SIZE])
     {
         for (int j = 0; j < m; j++)
         {
-            if (board[n][m] == 0)
-                printf("| %d ", board[n][m]);
+            if (board[i][j] == 0)
+                printf("|   ", board[i][j]);
             else
-                printf("| %d ", board[n][m]);
+                printf("| %d ", board[i][j]);
         }
         printf("|\n");
         for (int j = 0; j < m; j++)
@@ -220,8 +226,6 @@ void add_tetramino_to_board(int gameboard[][MAX_SIZE], int tetremino[][3], int c
     int tetremino_add_flag = 1;
     int tetremino_add_flag_1 = 0;
 
-    printf("Halo");
-
     while (i < 3 && tetremino_point_flag == 0)
     {
         while (j >= 0 && tetremino_point_flag == 0)
@@ -244,7 +248,7 @@ void add_tetramino_to_board(int gameboard[][MAX_SIZE], int tetremino[][3], int c
     while (t <= height && gameboard_coordinate_flag == 0)
     {
         printf("t= %d\n", t);
-        if (gameboard[coordinate][t] == 1 && gameboard_coordinate_flag == 0)
+        if (gameboard[t][coordinate] == 1 && gameboard_coordinate_flag == 0)
         {
             gameboard_coordinate = t - 1;
             gameboard_coordinate_flag = 1;
@@ -259,13 +263,15 @@ void add_tetramino_to_board(int gameboard[][MAX_SIZE], int tetremino[][3], int c
         }
         t++;
     }
+
     while (tetremino_add_flag_1 == 0)
     {
         for (int k = 0; k < 3; k++)
         {
-            if (tetremino[tetremino_row][k] == 1 && gameboard[gameboard_coordinate][coordinate + k])
+            if (tetremino[tetremino_row][k] == 1 && gameboard[gameboard_coordinate - 1][coordinate + k] == 1)
             {
-                printf("\nCheck: (%d,%d)\n", gameboard_coordinate, coordinate + k);
+                printf("\nCheck: (%d,%d)\n", gameboard_coordinate + 1, coordinate + k);
+                printf("Gameboard: %d, Tetremino: %d\n", gameboard[gameboard_coordinate - 1][coordinate + k], tetremino[tetremino_row][k]);
                 tetremino_add_flag = 0;
             }
         }
@@ -276,24 +282,24 @@ void add_tetramino_to_board(int gameboard[][MAX_SIZE], int tetremino[][3], int c
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    gameboard[gameboard_coordinate - 3 + i][coordinate + j] = tetremino[i][j] + gameboard[gameboard_coordinate - 3 + i][coordinate + j];
-                    printf("\nAdd: (%d,%d)\n", gameboard_coordinate - 3 + i, coordinate + j);
-                    printf("gameboard:%d\n", gameboard[gameboard_coordinate - 3 + i][coordinate + j]);
+                    gameboard[gameboard_coordinate + i - 1][coordinate + j - 1] = tetremino[i][j] + gameboard[gameboard_coordinate + i - 1][coordinate + j - 1];
+                    // printf("\nAdd: (%d,%d)\n", gameboard_coordinate + i - 1, coordinate + j);
+                    // printf("gameboard:%d\n", gameboard[gameboard_coordinate + i - 1][coordinate + j - 1]);
                 }
             }
             tetremino_add_flag_1 = 1;
         }
         if (tetremino_add_flag == 0)
         {
-            printf("j--\n");
+            printf("gameboard_coordinate-- : %d\n", gameboard_coordinate);
             gameboard_coordinate--;
         }
 
-        if (gameboard_coordinate == -1)
+        if (gameboard_coordinate < 0)
         {
             printf("Gameover\n");
             tetremino_add_flag_1 == 1;
-            // gameover
+            break;
         }
     }
 }
