@@ -11,7 +11,14 @@ enum
     GAMEOVER
 };
 
-int n = 0, m = 0;
+enum
+{
+    PLAY = 1,
+    QUIT
+};
+
+int n = 0,
+    m = 0;
 
 void reset_board(int board[MAX_SIZE][MAX_SIZE]);
 
@@ -72,6 +79,7 @@ int main()
     // int dummy_tetremino2[3][3];
     int coordinate;
     int tetremino_no;
+    uint8_t menu_state;
     uint8_t code;
     uint8_t state;
 
@@ -82,107 +90,119 @@ int main()
     printf("\n");
     printf("##########################\n");
     printf("\n");
-    printf("Please enter the dimensions of game board: \n");
-    printf("Height:\t");
-    scanf("%d", &n);
-    printf("Width:\t");
-    scanf("%d", &m);
 
-    int gameboard[MAX_SIZE][MAX_SIZE];
+    printf("\n1- PLAY\n");
+    printf("2- QUIT\n");
+    scanf("%d", &menu_state);
 
-    reset_board(gameboard);
-
-    print_board(gameboard);
-
-    while (1)
+    while (menu_state == PLAY)
     {
-        if (state == OK)
+        state = OK;
+        printf("Please enter the dimensions of game board: \n");
+        printf("Height:\t");
+        scanf("%d", &n);
+        printf("Width:\t");
+        scanf("%d", &m);
+
+        int gameboard[MAX_SIZE][MAX_SIZE];
+
+        reset_board(gameboard);
+
+        print_board(gameboard);
+
+        printf("Let the game begin!!!!\n");
+        while (state != GAMEOVER)
         {
-            tetremino_no = select_tetramino();
-
-            switch (tetremino_no)
+            if (state == OK)
             {
-            case 1:
-                equalize_tetreminos(tetremino1, temp_tetremino);
-                break;
-            case 2:
-                equalize_tetreminos(tetremino2, temp_tetremino);
-                break;
-            case 3:
-                equalize_tetreminos(tetremino3, temp_tetremino);
-                break;
-            case 4:
-                equalize_tetreminos(tetremino4, temp_tetremino);
-                break;
-            case 5:
-                equalize_tetreminos(tetremino5, temp_tetremino);
-                break;
-            case 6:
-                equalize_tetreminos(tetremino6, temp_tetremino);
-                break;
-            case 7:
-                equalize_tetreminos(tetremino7, temp_tetremino);
-                break;
-            default:
-                printf("WTF is going on ???");
-                break;
-            }
-
-            do
-            {
-                print_tetremino(temp_tetremino);
-                printf("\nRotate tetremino left/ok/right (q/w/e): ");
-                scanf("%s", &command);
-                switch (command)
+                tetremino_no = select_tetramino();
+                reset_tetramino(temp_tetremino);
+                switch (tetremino_no)
                 {
-                case 'q':
-                    rotate_tetremino_left(temp_tetremino);
-                    print_tetremino(temp_tetremino);
+                case 1:
+                    equalize_tetreminos(tetremino1, temp_tetremino);
                     break;
-
-                case 'e':
-                    rotate_tetremino_right(temp_tetremino);
-                    print_tetremino(temp_tetremino);
+                case 2:
+                    equalize_tetreminos(tetremino2, temp_tetremino);
                     break;
-                case 'w':
-                    print_tetremino(temp_tetremino);
-                    print_board(gameboard);
+                case 3:
+                    equalize_tetreminos(tetremino3, temp_tetremino);
                     break;
-
+                case 4:
+                    equalize_tetreminos(tetremino4, temp_tetremino);
+                    break;
+                case 5:
+                    equalize_tetreminos(tetremino5, temp_tetremino);
+                    break;
+                case 6:
+                    equalize_tetreminos(tetremino6, temp_tetremino);
+                    break;
+                case 7:
+                    equalize_tetreminos(tetremino7, temp_tetremino);
+                    break;
                 default:
-                    printf("Wrong command!!!\n");
+                    printf("WTF is going on ???");
                     break;
                 }
-            } while (command != 'w');
-        }
-        printf("\nEnter the coordinate: ");
-        scanf("%d", &coordinate);
 
-        code = add_tetramino_to_board(gameboard, temp_tetremino, coordinate, n);
-        if (code == OK)
-        {
-            print_board(gameboard);
-            state = OK;
-            check_for_fulled_columns(gameboard);
-        }
-        else if (code == COORDINATE_ERROR)
-        {
-            printf("You can't put tetramino here! Try smaller coordinate.");
-            state = COORDINATE_ERROR;
-        }
-        else if (code == GAMEOVER)
-        {
-            printf("###################################################################\n");
-            printf("###################################################################\n");
-            printf("                           GAMEOVER                                \n");
-            printf("                           GAMEOVER                                \n");
-            printf("                           GAMEOVER                                \n");
-            printf("###################################################################\n");
-            printf("###################################################################\n");
+                do
+                {
+                    print_tetremino(temp_tetremino);
+                    printf("Rotate tetremino left/ok/right (q/w/e): ");
+                    scanf("%s", &command);
+                    switch (command)
+                    {
+                    case 'q':
+                        rotate_tetremino_left(temp_tetremino);
+                        print_tetremino(temp_tetremino);
+                        break;
 
-            state = GAMEOVER;
-            break;
+                    case 'e':
+                        rotate_tetremino_right(temp_tetremino);
+                        print_tetremino(temp_tetremino);
+                        break;
+                    case 'w':
+                        print_tetremino(temp_tetremino);
+                        print_board(gameboard);
+                        break;
+                    default:
+                        printf("Wrong command!!!\n");
+                        break;
+                    }
+                } while (command != 'w');
+            }
+            printf("\nEnter the coordinate: ");
+            scanf("%d", &coordinate);
+
+            code = add_tetramino_to_board(gameboard, temp_tetremino, coordinate, n);
+            if (code == OK)
+            {
+                print_board(gameboard);
+                state = OK;
+                check_for_fulled_columns(gameboard);
+            }
+            else if (code == COORDINATE_ERROR)
+            {
+                printf("You can't put tetramino here! Try smaller coordinate.");
+                state = COORDINATE_ERROR;
+            }
+            else if (code == GAMEOVER)
+            {
+                printf("###################################################################\n");
+                printf("###################################################################\n");
+                printf("                           GAMEOVER                                \n");
+                printf("                           GAMEOVER                                \n");
+                printf("                           GAMEOVER                                \n");
+                printf("###################################################################\n");
+                printf("###################################################################\n");
+
+                state = GAMEOVER;
+            }
         }
+        printf("Wanna play again?");
+        printf("\n1- PLAY\n");
+        printf("2- QUIT\n");
+        scanf("%d", &menu_state);
     }
     /*while (1)
     {
@@ -239,6 +259,17 @@ void reset_board(int board[MAX_SIZE][MAX_SIZE])
     }
 }
 
+void reset_tetramino(int tetramino[][3])
+{
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            tetramino[i][j] = 0;
+        }
+    }
+}
+
 void print_board(int board[MAX_SIZE][MAX_SIZE])
 {
     for (int j = 0; j < m; j++)
@@ -291,6 +322,7 @@ void print_tetremino(int tetremino[][3])
 
 void equalize_tetreminos(int const_matris[][3], int matris_to_equaled[][3])
 {
+
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
